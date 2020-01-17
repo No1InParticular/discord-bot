@@ -2,6 +2,12 @@ const Discord = require("discord.js");
 const client = new Discord.Client();
 const config = require("./config.json");
 
+let p1 = null;
+let p2 = null;
+let places = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
+let p1turn = true;
+let inProgress = false;
+
 client.on("ready", () => {
     client.user.setActivity("You", { type: "WATCHING" });
 });
@@ -27,12 +33,201 @@ client.on("message", async message => {
         .split(/ +/g);
     const command = args.shift().toLowerCase();
 
+    const chat = message.channel;
+
     if (command === "ping") {
         // Calculates ping between sending a message and editing it, giving a nice round-trip latency.
         // The second ping is an average latency between the bot and the websocket server (one-way, not round-trip)
-        const m = await message.channel.send("Ping?");
+        const m = await chat.send("Ping?");
         m.edit(`Pong! Latency is ${m.createdTimestamp - message.createdTimestamp}ms. API Latency is ${Math.round(client.ping)}ms`);
+        return;
+    }
+
+    if (command === "ttt") {
+        if (args.length == 0) {
+            chat.send("Please specify an argument: `_ttt join` to join a game or `_ttt play <position>` to make a move");
+            return;
+        }
+
+        if (args[0] === "join") {
+            if (inProgress) {
+                chat.send(message.sender.toString() + " a game is already in progress, please wait.");
+                return;
+            }
+
+            if (p1 == null) {
+                p1 = message.author;
+                chat.send(p1.toString() + " joined the game, one more needed.");
+                return;
+            }
+
+            if (p2 == null) {
+                if (p1 == message.author) {
+                    chat.send(p1.toString() + " you are already player 1!");
+                    return;
+                }
+
+                p2 = message.author;
+                chat.send(p2.toString() + " is player 2!");
+                startGame(chat);
+                return;
+            }
+
+            chat.send(message.sender.toString() + " sorry there can only be two players!");
+            return;
+        } else if (args[0] === "play") {
+            if (!inProgress) {
+                chat.send(message.sender.toString() + " a game is not currently in progress.");
+                return;
+            }
+
+            if (message.sender != p1 || message.sender != p2) {
+                chat.send(message.sender.toString() + " you are not part of this game.");
+                return;
+            }
+
+            if ((p1turn && message.sender == p2) || (!p1turn && message.sender == p1)) {
+                chat.send(message.sender.toString() + " it is not currently your turn");
+                return;
+            }
+
+            if (args.length < 2) {
+                chat.send(message.sender.toString() + " please specify a position to play in");
+                return;
+            }
+
+            let pos = args[1];
+            let index = pos - 1;
+
+            if (places[index] == pos) {
+                if (p1turn) {
+                    places[index] = "x";
+                } else {
+                    places[index] = "o";
+                }
+                printBoard(chat);
+                checkWin(index);
+            } else {
+                chat.send(message.sender.toString() + " this position has already been played!");
+                return;
+            }
+        }
     }
 });
+
+function printBoard(chat) {
+    chat.send(
+        "```\n" +
+            places[0] +
+            " | " +
+            places[1] +
+            " | " +
+            places[2] +
+            "\n---------\n" +
+            places[3] +
+            " | " +
+            places[4] +
+            " | " +
+            places[5] +
+            "\n---------\n" +
+            places[6] +
+            " | " +
+            places[7] +
+            " | " +
+            places[8] +
+            "\n```"
+    );
+}
+
+function startGame(chat) {
+    inProgress = true;
+    places = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
+    chat.send(p1.toString() + " and " + p2.toString() + " are playing.");
+    chat.send(p1.toString() + " make your move! (`_ttt play <position>`)");
+    printBoard(chat);
+}
+
+function endGame() {
+    if (p1turn) {
+        chat.send(p1.toString() + " has won!");
+    } else {
+        chat.send(p2.toString() + " has won!");
+    }
+
+    inProgress = false;
+    p1 = null;
+    p2 = null;
+    p1turn = true;
+}
+
+function checkWin(index) {
+    var value = places[index];
+    if (index == 0) {
+        if (places[1] == value && places[2] == value) {
+            endGame();
+        } else if (places[4] == value && places[8] == value) {
+            endGame();
+        } else if (places[3] == value && places[6] == value) {
+            endGame();
+        }
+    } else if (index == 1) {
+        if (places[0] == value && places[2] == value) {
+            endGame();
+        } else if (places[4] == value && places[7] == value) {
+            endGame();
+        }
+    } else if (index == 2) {
+        if (places[0] == value && places[1] == value) {
+            endGame();
+        } else if (places[4] == value && places[6] == value) {
+            endGame();
+        } else if (places[5] == value && places[8] == value) {
+            endGame();
+        }
+    } else if (index == 3) {
+        if (places[0] == value && places[6] == value) {
+            endGame();
+        } else if (places[4] == value && places[5] == value) {
+            endGame();
+        }
+    } else if (index == 4) {
+        if (places[0] == value && places[8] == value) {
+            endGame();
+        } else if (places[1] == value && places[7] == value) {
+            endGame();
+        } else if (places[2] == value && places[6] == value) {
+            endGame();
+        } else if (places[3] == value && places[5] == value) {
+            endGame();
+        }
+    } else if (index == 5) {
+        if (places[2] == value && places[8] == value) {
+            endGame();
+        } else if (places[3] == value && places[4] == value) {
+            endGame();
+        }
+    } else if (index == 6) {
+        if (places[0] == value && places[3] == value) {
+            endGame();
+        } else if (places[4] == value && places[2] == value) {
+            endGame();
+        } else if (places[7] == value && places[8] == value) {
+            endGame();
+        }
+    } else if (index == 7) {
+        if (places[1] == value && places[4] == value) {
+            endGame();
+        } else if (places[6] == value && places[8] == value) {
+            endGame();
+        }
+    } else if (index == 8) {
+        if (places[2] == value && places[5] == value) {
+            endGame();
+        } else if (places[6] == value && places[7] == value) {
+            endGame();
+        }
+    }
+    p1turn = !p1turn;
+}
 
 client.login(config.token);
