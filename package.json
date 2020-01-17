@@ -1,0 +1,23 @@
+{
+  "name": "discord-bot",
+  "version": "1.0.0",
+  "description": "This is a discord bot I am developing just to test out different functionality I can do with it.",
+  "main": "bot.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/No1InParticular/discord-bot.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/No1InParticular/discord-bot/issues"
+  },
+  "homepage": "https://github.com/No1InParticular/discord-bot#readme",
+  "dependencies": {
+    "discord.js": "^11.5.1"
+  }
+}
