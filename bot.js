@@ -70,7 +70,7 @@ client.on("message", async message => {
 
                 p2 = message.author;
                 chat.send(p2.toString() + " is player 2!");
-                startGame(chat);
+                startGame();
                 return;
             }
 
