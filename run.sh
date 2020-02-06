@@ -6,4 +6,4 @@ git pull
 echo "Running npm install"
 npm install
 echo "Starting ${BUILD_NUMBER}"
-node bot.js&
+node bot.js
