@@ -181,14 +181,12 @@ function checkWin(index) {
         } else if (places[3] == value && places[6] == value) {
             endGame(false);
         }
-        return;
     } else if (index == 1) {
         if (places[0] == value && places[2] == value) {
             endGame(false);
         } else if (places[4] == value && places[7] == value) {
             endGame(false);
         }
-        return;
     } else if (index == 2) {
         if (places[0] == value && places[1] == value) {
             endGame(false);
@@ -197,14 +195,12 @@ function checkWin(index) {
         } else if (places[5] == value && places[8] == value) {
             endGame(false);
         }
-        return;
     } else if (index == 3) {
         if (places[0] == value && places[6] == value) {
             endGame(false);
         } else if (places[4] == value && places[5] == value) {
             endGame(false);
         }
-        return;
     } else if (index == 4) {
         if (places[0] == value && places[8] == value) {
             endGame(false);
@@ -215,14 +211,12 @@ function checkWin(index) {
         } else if (places[3] == value && places[5] == value) {
             endGame(false);
         }
-        return;
     } else if (index == 5) {
         if (places[2] == value && places[8] == value) {
             endGame(false);
         } else if (places[3] == value && places[4] == value) {
             endGame(false);
         }
-        return;
     } else if (index == 6) {
         if (places[0] == value && places[3] == value) {
             endGame(false);
@@ -231,21 +225,18 @@ function checkWin(index) {
         } else if (places[7] == value && places[8] == value) {
             endGame(false);
         }
-        return;
     } else if (index == 7) {
         if (places[1] == value && places[4] == value) {
             endGame(false);
         } else if (places[6] == value && places[8] == value) {
             endGame(false);
         }
-        return;
     } else if (index == 8) {
         if (places[2] == value && places[5] == value) {
             endGame(false);
         } else if (places[6] == value && places[7] == value) {
             endGame(false);
         }
-        return;
     }
 
     p1turn = !p1turn;
