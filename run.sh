@@ -1,6 +1,6 @@
 #!/bin/sh
 echo "Killing bot"
-killall node
+killall node;
 echo "Pulling latest changes"
 git pull
 echo "Running npm install"
