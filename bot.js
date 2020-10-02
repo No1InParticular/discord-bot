@@ -7,7 +7,7 @@ let p2 = null;
 let places = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
 let p1turn = true;
 let inProgress = false;
-let chat;
+let chat = null;
 
 client.on("ready", () => {
     client.user.setActivity("You", { type: "WATCHING" });
@@ -41,10 +41,18 @@ client.on("message", async message => {
         // The second ping is an average latency between the bot and the websocket server (one-way, not round-trip)
         const m = await chat.send("Ping?");
         m.edit(`Pong! Latency is ${m.createdTimestamp - message.createdTimestamp}ms. API Latency is ${Math.round(client.ping)}ms`);
+        chat = null;
         return;
     }
 
     if (command === "ttt") {
+        
+        // Don't accept ttt commands if already active in a channel
+        if(chat !== null) {
+            message.channel.send("Sorry I am busy in another channel! Please try again later.");
+            return;
+        }
+        
         if (args.length == 0) {
             chat.send("Please specify an argument: `_ttt join` to join a game or `_ttt play <position>` to make a move");
             return;
@@ -156,6 +164,7 @@ function endGame(draw) {
     p1 = null;
     p2 = null;
     p1turn = true;
+    chat = null;
 }
 
 // 0 | 1 | 2
@@ -180,6 +189,8 @@ let winMethods = [
 
 function checkWin(index) {
     draw = true;
+    
+    // Loop through all the spaces, if it finds one that is blank then it can't be a draw
     for (let x = 0; x < 9; x++) {
         if (places[x] != "x" && places[x] != "o") {
             draw = false;
